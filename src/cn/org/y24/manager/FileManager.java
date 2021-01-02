@@ -45,12 +45,9 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
                     return false;
             }
             case readLocalTarFile -> {
-                /// TODO: input: location, stands for the file to be unTared.
-                /// TODO: output: a TarHeader, a fileNameList, a charEncodeTable and a fileBlocks.
                 NewTarInFileWorker inWorker = NewTarInFileWorker.ofInstance(entity.getLocation(), entity.getCredential());
                 if (inWorker.isNull())
                     return false;
-                final var rootDir = entity.getLocation() + (entity.getLocation().endsWith(File.separator) ? "" : File.separator);
                 final var header = inWorker.getHeader();
                 final var charEncodeTable = inWorker.getCharCodeTable();
                 final var fileNameList = inWorker.getFileNameList();
@@ -71,8 +68,6 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
                 return true;
             }
             case writeLocalTarFile -> {
-                /// TODO: input: a destination,a TarHeader, a CharEncodeTable
-                /// TODO: output: a Tared File.
                 NewTarOutFileWorker outWorker = NewTarOutFileWorker.ofInstance(entity.getDestination(),
                         entity.getAlgorithm(),
                         entity.getCredential());
@@ -100,8 +95,6 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
                 return headerStatus && charEncodeTableStatus && fileNameListStatus && fileBlocksStatus;
             }
             case writeLocalUnTarFile -> {
-                /// TODO: input: location,a destination,a TarHeader, a CharEncodeTable
-                /// TODO: output:  unTared Files.
                 final var rootDir = entity.getDestination() + (entity.getDestination().endsWith(File.separator) ? "" : File.separator);
                 File rootDirFile = new File(rootDir);
                 if (!rootDirFile.mkdir())
@@ -129,7 +122,7 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
                         final HuffmanEntity huffmanActionEntity = (HuffmanEntity) huffmanAction.getEntity();
                         data.add(huffmanActionEntity.getOutput());
                     }
-                    if (!ExternalOutFileWorker.writeFile(rootDir , entry.getKey(), data))
+                    if (!ExternalOutFileWorker.writeFile(rootDir, entry.getKey(), data))
                         return false;
                 }
             }
