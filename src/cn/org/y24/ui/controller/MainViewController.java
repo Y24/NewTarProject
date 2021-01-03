@@ -2,25 +2,27 @@ package cn.org.y24.ui.controller;
 
 import cn.org.y24.Main;
 import cn.org.y24.actions.AccountAction;
+import cn.org.y24.actions.BackupAction;
 import cn.org.y24.actions.FileAction;
 import cn.org.y24.entity.AccountEntity;
+import cn.org.y24.entity.BackupEntity;
 import cn.org.y24.entity.FileEntity;
 import cn.org.y24.entity.TarFileInfoEntity;
-import cn.org.y24.entity.TarMessageEntity;
 import cn.org.y24.enums.AccountActionType;
+import cn.org.y24.enums.BackupActionType;
 import cn.org.y24.enums.FileActionType;
 import cn.org.y24.interfaces.IManager;
 import cn.org.y24.manager.AccountManager;
+import cn.org.y24.manager.BackupManager;
 import cn.org.y24.manager.FileManager;
 import cn.org.y24.ui.framework.BaseStageController;
 import cn.org.y24.ui.framework.Deliverer;
 import cn.org.y24.ui.framework.SceneManager;
 import cn.org.y24.ui.framework.StageManager;
 import cn.org.y24.utils.AboutMessage;
-import cn.org.y24.utils.AlertPageUtil;
 import cn.org.y24.utils.NewTarFileSpec;
-import com.sun.javafx.binding.StringFormatter;
-import javafx.beans.property.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,7 +31,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import org.junit.platform.engine.support.descriptor.FileSystemSource;
 
 import java.io.File;
 import java.net.URL;
@@ -39,10 +40,13 @@ import java.util.stream.Collectors;
 public class MainViewController extends BaseStageController implements Initializable {
 
     private StageManager stageManager;
-    private StringProperty cwdStringProperty;
     private IManager<AccountAction> accountManager;
+    private final IManager<BackupAction> backupManager = new BackupManager();
+    private List<BackupEntity> cloudSide = new LinkedList<>();
+    List<BackupEntity> localSide = new LinkedList<>();
     private AccountEntity account;
     ObservableList<String> fileList;
+    private StringProperty cwdStringProperty;
     @FXML
     private ListView<String> fileListId;
     @FXML
@@ -63,10 +67,12 @@ public class MainViewController extends BaseStageController implements Initializ
     private static class CustomCell extends ListCell<String> {
         private final StageManager stageManager;
         private final StringProperty cwd;
+        private final List<BackupEntity> localSide;
 
-        public CustomCell(StageManager stageManager, StringProperty cwd) {
+        public CustomCell(StageManager stageManager, StringProperty cwd, List<BackupEntity> localSide) {
             this.stageManager = stageManager;
             this.cwd = cwd;
+            this.localSide = localSide;
         }
 
         private String getPrefix() {
@@ -98,7 +104,11 @@ public class MainViewController extends BaseStageController implements Initializ
             dirContextMenu.setStyle("-fx-font-size: 18px");
             final File file = new File(getPrefix() + s);
             if (file.exists()) {
-                setContextMenu(!file.isDirectory() && s.endsWith(NewTarFileSpec.suffix) ? fileContextMenu : dirContextMenu);
+                if (file.isDirectory()) {
+                    setContextMenu(dirContextMenu);
+                } else if (file.isFile() && s.endsWith(NewTarFileSpec.suffix)) {
+                    setContextMenu(fileContextMenu);
+                }
             }
             final Label label = new Label(s);
             label.setOnMouseClicked(mouseEvent -> {
@@ -165,6 +175,7 @@ public class MainViewController extends BaseStageController implements Initializ
 
         private void showTarPage(String target) {
             System.out.println(target);
+            localSide.add(new BackupEntity(target, new Date()));
             SceneManager sceneManager = stageManager.get(Main.primarySceneManagerName);
             stageManager.sendSingleCastMessage(sceneManager.getCurrentScene().hashCode(), 2, target);
             Parent tarPageParent = sceneManager.init("TarPageView.fxml", stageManager);
@@ -190,7 +201,7 @@ public class MainViewController extends BaseStageController implements Initializ
         fileList = FXCollections.observableArrayList();
         fileListId.setItems(fileList);
         fileListId.setStyle("-fx-font-size: 24px");
-        fileListId.setCellFactory(stringListView -> new CustomCell(stageManager, cwdStringProperty));
+        fileListId.setCellFactory(stringListView -> new CustomCell(stageManager, cwdStringProperty, localSide));
         cwdStringProperty.addListener((observableValue, s, t1) -> {
             final String location = observableValue.getValue();
             final File file = new File(location);
@@ -224,33 +235,35 @@ public class MainViewController extends BaseStageController implements Initializ
         alert.setTitle("历史记录");
         ListView<String> historyListView = new ListView<>();
         final List<String> content = new ArrayList<>();
-//        content.addAll(localSide.parallelStream().map(QueryHistoryEntity::toString).collect(Collectors.toList()));
-//        content.addAll(cloudSide.parallelStream().map(QueryHistoryEntity::toString).collect(Collectors.toList()));
+        content.addAll(localSide.parallelStream().map(BackupEntity::toString).collect(Collectors.toList()));
+        content.addAll(cloudSide.parallelStream().map(BackupEntity::toString).collect(Collectors.toList()));
         historyListView.setItems(FXCollections.observableArrayList(content));
         historyListView.setFixedCellSize(50);
         historyListView.setStyle("-fx-font-size: 18px");
         historyListView.setPrefWidth(1000);
         alert.setGraphic(historyListView);
         alert.setHeaderText("查询历史");
+        stageManager.hideNewest();
         alert.showAndWait();
     }
 
     @FXML
     private void doPull() {
-        /*cloudSide.clear();
+        cloudSide.clear();
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setHeaderText("结果");
         alert.setTitle("结果");
-        final var action = new HistoryAction(HistoryActionType.fetch, account);
-        if (historyManager.execute(action)) {
+        final var action = new BackupAction(BackupActionType.fetch, account);
+        if (backupManager.execute(action)) {
             alert.setAlertType(Alert.AlertType.INFORMATION);
             alert.setContentText("成功从云端获取数据!");
-            cloudSide = action.getHistoryList();
+            cloudSide = action.getEntityList();
         } else {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("拉取失败!");
         }
-        alert.showAndWait();*/
+        stageManager.hideNewest();
+        alert.showAndWait();
     }
 
     @FXML
@@ -258,11 +271,11 @@ public class MainViewController extends BaseStageController implements Initializ
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setHeaderText("结果");
         alert.setTitle("结果");
-     /*   if (localSide.isEmpty()) {
+        if (localSide.isEmpty()) {
             alert.setAlertType(Alert.AlertType.INFORMATION);
             alert.setContentText("无需同步!");
         } else {
-            if (historyManager.execute(new HistoryAction(HistoryActionType.push, account, localSide))) {
+            if (backupManager.execute(new BackupAction(BackupActionType.push, localSide, account))) {
                 alert.setAlertType(Alert.AlertType.INFORMATION);
                 alert.setContentText("成功同步数据到云端!");
             } else {
@@ -271,7 +284,8 @@ public class MainViewController extends BaseStageController implements Initializ
             }
         }
         localSide.clear();
-        alert.showAndWait();*/
+        stageManager.hideNewest();
+        alert.showAndWait();
     }
 
     @FXML
@@ -279,7 +293,8 @@ public class MainViewController extends BaseStageController implements Initializ
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("关于");
         alert.setHeaderText("相关信息");
-        alert.setContentText(new AboutMessage("Y24", "1.0.0", "https://github.com/y24/weather_report", "Linux JavaSE 15/Intellij IDEA Ultimate/OpenJFX 15", "NewTar").toString());
+        alert.setContentText(new AboutMessage("Y24", "1.0.0", "https://github.com/y24/NewTarProject", "Linux JavaSE 15/Intellij IDEA Ultimate/OpenJFX 15", "NewTar").toString());
+        stageManager.hideNewest();
         alert.showAndWait();
     }
 

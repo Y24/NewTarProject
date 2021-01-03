@@ -86,6 +86,16 @@ public class StageManager extends BaseManager<SceneManager> {
 
     }
 
+    public boolean hideNewest() {
+        if (!currentSceneManagers.isEmpty()) {
+            currentSceneManagers.getLast().getOwnerStage().setAlwaysOnTop(false);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     public void convertTo(String sceneManagerName) {
         closeNewest();
         showAdditional(sceneManagerName);

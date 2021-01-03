@@ -7,8 +7,6 @@ public enum FileActionType implements IType {
     readLocalTarFile,
     writeLocalUnTarFile,
     writeLocalTarFile,
-    readRemoteUnTarFile,
     readRemoteTarFile,
-    writeRemoteUnTarFile,
     writeRemoteTarFile,
 }

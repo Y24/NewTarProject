@@ -7,23 +7,26 @@ import cn.org.y24.entity.HuffmanEntity;
 import cn.org.y24.enums.FileActionType;
 import cn.org.y24.enums.HuffmanActionType;
 import cn.org.y24.interfaces.IManager;
-import cn.org.y24.interfaces.IType;
 import cn.org.y24.interfaces.IUrlProvider;
 import cn.org.y24.utils.*;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 // read regular files that are to be tared from local or cloud
 // write tared file to os or cloud
 public class FileManager implements IManager<FileAction>, IUrlProvider {
+    FileActionType actionType;
 
     @Override
     public boolean execute(FileAction fileAction) {
         final var entity = (FileEntity) fileAction.getEntity();
-        IType actionType = fileAction.getType();
-        switch ((FileActionType) actionType) {
+        actionType = (FileActionType) fileAction.getType();
+        switch (actionType) {
             case readLocalUnTarFile -> {
                 final String rootDir = entity.getLocation();
                 final List<String> fileNames = new LinkedList<>();
@@ -126,6 +129,105 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
                         return false;
                 }
             }
+            case readRemoteTarFile -> {
+                final var url = entity.getLocation();
+                var destinationDir = entity.getDestination();
+                // URL: ntfp://y24.org.cn:2424/username/path-to-file
+                // URL: ntfp://localhost:2424/username/path-to-file
+                // URL: ntfp://127.0.0.1:2424/username/path-to-file
+                UrlHandler handler = null;
+                try {
+                    if (!new File(destinationDir).exists())
+                        return false;
+                    destinationDir = destinationDir + (destinationDir.endsWith(File.separator) ? "" : File.separator);
+                    final var paths = url.split(File.separator);
+                    final File outFile = new File(destinationDir + paths[paths.length - 1]);
+                    if (outFile.exists()) {
+                        if (!outFile.delete())
+                            return false;
+                    }
+                    final var outStream = new BufferedOutputStream(new FileOutputStream(outFile));
+                    handler = new UrlHandler();
+                    if (!handler.handle(getUrl(), new HashMap<>() {{
+                        this.put("location", entity.getLocation());
+                    }})) {
+                        handler.dispose();
+                        return false;
+                    }
+                    final var reader = handler.getReader();
+                    if (!reader.readLine().startsWith("OK")) {
+                        handler.dispose();
+                        return false;
+                    }
+                    char[] buffer;
+                    int size;
+                    do {
+                        size = reader.read();
+                        if (size == 0)
+                            break;
+                        buffer = new char[size];
+                        if (reader.read(buffer) < size)
+                            return false;
+                        System.out.println("current: " + buffer.length);
+                        outStream.write(Base64.getDecoder().decode(String.valueOf(buffer)));
+                    } while (true);
+                    reader.close();
+                    outStream.flush();
+                    outStream.close();
+                    handler.dispose();
+                    return true;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                } finally {
+                    if (handler != null) handler.dispose();
+                }
+            }
+            case writeRemoteTarFile -> {
+                final var paths = entity.getLocation().split(File.separator);
+                final String fileName = paths[paths.length - 1];
+                var destinationDir = entity.getDestination();
+                destinationDir = destinationDir + (destinationDir.endsWith(File.separator) ? "" : File.separator);
+                final File inFile = new File(entity.getLocation());
+                if (!entity.getLocation().endsWith(NewTarFileSpec.suffix) || !inFile.exists() || inFile.isDirectory())
+                    return false;
+                UrlHandler handler = null;
+                try {
+                    final var inReader = new BufferedInputStream(new FileInputStream(inFile));
+                    final Map<String, String> content = new LinkedHashMap<>();
+                    byte[] buffer = new byte[NewTarFileSpec.maxBlockLength];
+                    int count;
+                    int i = 0;
+                    do {
+                        count = inReader.read(buffer);
+                        if (count == -1)
+                            break;
+                        final var current = Arrays.copyOf(buffer, count);
+                        content.put("content" + i++, URLEncoder.encode(Base64.getUrlEncoder().encodeToString(current), StandardCharsets.UTF_8));
+                    } while (true);
+                    final Map<String, String> options = new LinkedHashMap<>();
+                    options.put("destination", destinationDir + fileName);
+                    options.put("count", "" + content.size());
+                    options.putAll(content);
+                    inReader.close();
+                    handler = new UrlHandler();
+                    if (!handler.handle(getUrl(), options)) {
+                        handler.dispose();
+                        return false;
+                    }
+                    final var reader = handler.getReader();
+                    if (!reader.readLine().startsWith("OK")) {
+                        handler.dispose();
+                        return false;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                } finally {
+                    if (handler != null) handler.dispose();
+                }
+            }
         }
         return true;
     }
@@ -133,6 +235,6 @@ public class FileManager implements IManager<FileAction>, IUrlProvider {
 
     @Override
     public String getUrl() {
-        return null;
+        return baseUrl + actionType.toString();
     }
 }
