@@ -6,4 +6,5 @@ package cn.org.y24.ui.framework;
 
 public interface IStageController {
     void setStageManager(StageManager stageManager);
+    void receiveMessage();
 }

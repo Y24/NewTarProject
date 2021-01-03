@@ -15,10 +15,9 @@ import cn.org.y24.enums.FileActionType;
 import cn.org.y24.enums.HuffmanActionType;
 import cn.org.y24.manager.FileManager;
 import cn.org.y24.manager.HuffmanManager;
-import cn.org.y24.utils.ExternalOutFileWorker;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileManagerTest {
     @Test

@@ -37,6 +37,7 @@ public class SceneManager extends BaseManager<Scene> {
             Parent parent = fxmlLoader.load();
             BaseStageController controller = fxmlLoader.getController();
             controller.setStageManager(StageManager);
+            controller.receiveMessage();
             return parent;
         } catch (IOException e) {
             System.err.println("Cannot load Parent!");
@@ -52,5 +53,30 @@ public class SceneManager extends BaseManager<Scene> {
             currentScene = get(sceneName);
             return true;
         }
+    }
+
+    @Override
+    public Scene get(String name) {
+        return super.get(name);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+    }
+
+    @Override
+    public boolean delete(Scene scene) {
+        return super.delete(scene);
+    }
+
+    @Override
+    public boolean delete(String name) {
+        return super.delete(name);
+    }
+
+    @Override
+    public boolean add(Scene scene, String name) {
+        return super.add(scene, name);
     }
 }

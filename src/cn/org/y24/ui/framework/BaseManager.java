@@ -13,11 +13,11 @@ public abstract class BaseManager<T> implements IBaseManager<T> {
     HashMap<String, T> hashMap = new HashMap<>();
 
 
-    private boolean contains(String name) {
+    public boolean contains(String name) {
         return hashMap.containsKey(name);
     }
 
-    private boolean contains(T t) {
+    public boolean contains(T t) {
         return hashMap.containsValue(t);
     }
 

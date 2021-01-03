@@ -29,6 +29,7 @@ public class NewTarFileSpec {
     public static final int maxReadCount = 1024;
     public static final int defVersion = 0;
     public static final DateFormat defaultDateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.CHINA);
+    public static String suffix = ".newtar";
 
     public static boolean isValidCredential(CryptAlgorithm cryptAlgorithm, String magicField, String testKey) {
         if (cryptAlgorithm == CryptAlgorithm.noCrypt)

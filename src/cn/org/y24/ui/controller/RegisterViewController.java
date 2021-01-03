@@ -30,6 +30,11 @@ public class RegisterViewController extends BaseStageController {
         this.stageManager = stageManager;
     }
 
+    @Override
+    public void receiveMessage() {
+
+    }
+
     @FXML
     void ActionForUser() {
         passwordID.requestFocus();

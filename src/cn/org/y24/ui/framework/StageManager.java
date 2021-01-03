@@ -6,6 +6,8 @@
 
 package cn.org.y24.ui.framework;
 
+import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -13,22 +15,60 @@ import java.util.LinkedList;
 public class StageManager extends BaseManager<SceneManager> {
     private final LinkedList<SceneManager> currentSceneManagers = new LinkedList<>();
     private final ArrayList<Deliverer> messageBox = new ArrayList<>();
-    public void sendBroadcastMessage(int senderID,Object message){
-        messageBox.add(new Deliverer(senderID, Deliverer.broadcastFlag,message));
+
+    public void sendBroadcastMessage(int senderID, Object message) {
+        messageBox.add(new Deliverer(senderID, Deliverer.broadcastFlag, message));
     }
+
     public Collection<Deliverer> receiveBroadcastMessage() {
         Collection<Deliverer> delivererCollection = new ArrayList<>();
         for (Deliverer message : messageBox) {
-            if (message.getReceiverHahCode() == Deliverer.broadcastFlag) {
+            if (message.getReceiverHashCode() == Deliverer.broadcastFlag) {
                 delivererCollection.add(message);
             }
         }
         return delivererCollection;
     }
+
+    public void sendSingleCastMessage(int senderID, int receiveID, Object message) {
+        System.out.println("%%%%");
+        System.out.println(receiveID);
+        System.out.println("%%%%");
+        messageBox.add(new Deliverer(senderID, receiveID, message));
+    }
+
+    public Collection<Deliverer> receiveSingleCastMessage(int receiveID) {
+        Collection<Deliverer> delivererCollection = new ArrayList<>();
+        System.out.println("^^^^");
+        messageBox.forEach(deliverer -> System.out.println(deliverer.getReceiverHashCode()));
+        System.out.println(receiveID);
+        System.out.println("^^^^");
+        for (Deliverer message : messageBox) {
+            if (message.getReceiverHashCode() == receiveID) {
+                delivererCollection.add(message);
+            }
+        }
+        for (var each : delivererCollection) {
+            messageBox.remove(each);
+        }
+        return delivererCollection;
+    }
+
+
     public boolean showAdditional(String sceneManagerName) {
         if (get(sceneManagerName) != null) {
+            if (!currentSceneManagers.isEmpty()) {
+                currentSceneManagers.getLast().getOwnerStage().setAlwaysOnTop(false);
+            }
             currentSceneManagers.add(get(sceneManagerName));
-            get(sceneManagerName).getOwnerStage().show();
+            final Stage stage = get(sceneManagerName).getOwnerStage();
+/*
+            if (late == stage) {
+                System.out.println("Both equal!");
+            }*/
+            stage.setAlwaysOnTop(true);
+            stage.requestFocus();
+            stage.show();
             return true;
         }
         System.err.println("cannot show the Stage associated with sceneManager named " + sceneManagerName + ".");

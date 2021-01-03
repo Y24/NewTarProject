@@ -9,14 +9,14 @@ package cn.org.y24.ui.framework;
 public class Deliverer {
     public static int broadcastFlag = 0;
     private int senderHashCode;
-    private int receiverHahCode;
+    private int receiverHashCode;
     private Object message;
 
     public Deliverer(int senderHashCode,
-                     int receiverHahCode,
+                     int receiverHashCode,
                      Object message) {
         this.senderHashCode = senderHashCode;
-        this.receiverHahCode = receiverHahCode;
+        this.receiverHashCode = receiverHashCode;
         this.message = message;
     }
 
@@ -28,12 +28,12 @@ public class Deliverer {
         this.message = message;
     }
 
-    public int getReceiverHahCode() {
-        return receiverHahCode;
+    public int getReceiverHashCode() {
+        return receiverHashCode;
     }
 
-    public void setReceiverHahCode(int receiverHahCode) {
-        this.receiverHahCode = receiverHahCode;
+    public void setReceiverHashCode(int receiverHashCode) {
+        this.receiverHashCode = receiverHashCode;
     }
 
     public int getSenderHashCode() {

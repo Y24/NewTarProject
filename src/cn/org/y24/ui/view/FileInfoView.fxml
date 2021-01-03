@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<!--
+  ~ Copyright (c) 2021.
+  ~ Author: Y24.
+  ~ All Rights Reserved.
+  -->
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.org.y24.ui.controller.FileInfoViewController">
+    <Label fx:id="fileNameLabelId" alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="284.0" layoutY="26.0" text="Label" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="20.0">
+        <font>
+            <Font size="24.0" />
+        </font>
+        <textFill>
+            <LinearGradient>
+                <stops>
+                    <Stop>
+                        <color>
+                            <Color red="0.08954678475856781" green="0.796326756477356" blue="0.9210526347160339" />
+                        </color>
+                    </Stop>
+                    <Stop offset="1.0">
+                        <color>
+                            <Color red="0.022660817950963974" green="0.8157894611358643" blue="0.16806773841381073" />
+                        </color>
+                    </Stop>
+                </stops>
+            </LinearGradient>
+        </textFill>
+        <effect>
+            <DropShadow blurType="GAUSSIAN" height="5.0" offsetX="1.0" offsetY="1.0" radius="2.0" width="5.0" />
+        </effect>
+    </Label>
+    <Separator layoutX="200.0" layoutY="74.0" prefWidth="200.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="70.0" />
+   <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="100.0">
+      <children>
+          <VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <HBox maxHeight="50.0" maxWidth="1.7976931348623157E308" minHeight="50.0" minWidth="600.0" prefHeight="50.0" prefWidth="600.0">
+                  <Label alignment="CENTER" maxHeight="100.0" maxWidth="50.0" minHeight="50.0" minWidth="100.0" prefHeight="50.0" prefWidth="100.0" text="Name" textAlignment="CENTER">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                  </Label>
+                  <Label fx:id="fileNameId" alignment="CENTER" graphicTextGap="2.0" maxHeight="50.0" maxWidth="1.7976931348623157E308" minHeight="50.0" prefHeight="50.0" prefWidth="500.0" text="fileName" underline="true" wrapText="true">
+                      <font>
+                          <Font size="24.0" />
+                      </font>
+                  </Label>
+              </HBox>
+              <HBox layoutX="10.0" layoutY="10.0" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="400.0">
+                  <Label alignment="CENTER" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" prefHeight="50.0" prefWidth="100.0" text="Integrity" textAlignment="CENTER">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                  </Label>
+                  <Label fx:id="integrityId" alignment="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="500.0" text="Certficated">
+                      <font>
+                          <Font size="24.0" />
+                      </font>
+                  </Label>
+              </HBox>
+              <HBox layoutX="10.0" layoutY="10.0" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="400.0">
+                  <Label alignment="CENTER" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" prefHeight="50.0" prefWidth="100.0" text="Encryption" textAlignment="CENTER">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                  </Label>
+                  <Label fx:id="encryptionId" alignment="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="503.0" text="noEncryption">
+                      <font>
+                          <Font size="24.0" />
+                      </font>
+                  </Label>
+              </HBox>
+              <HBox layoutX="10.0" layoutY="110.0" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="400.0">
+                  <Label alignment="CENTER" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" prefHeight="50.0" prefWidth="100.0" text="FileCount" textAlignment="CENTER">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                  </Label>
+                  <Label fx:id="fileCountId" alignment="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="505.0" text="5">
+                      <font>
+                          <Font size="24.0" />
+                      </font>
+                  </Label>
+              </HBox>
+              <HBox layoutX="10.0" layoutY="160.0" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="400.0">
+                  <Label alignment="CENTER" maxHeight="50.0" maxWidth="100.0" minHeight="50.0" minWidth="100.0" prefHeight="50.0" prefWidth="100.0" text="FileBlocks" textAlignment="CENTER">
+                      <font>
+                          <Font size="18.0" />
+                      </font>
+                  </Label>
+                  <Label fx:id="fileBlocksId" alignment="CENTER" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" prefWidth="500.0" text="6">
+                      <font>
+                          <Font size="24.0" />
+                      </font>
+                  </Label>
+              </HBox>
+          </VBox>
+      </children>
+   </AnchorPane>
+</AnchorPane>

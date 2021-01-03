@@ -25,6 +25,10 @@ public class LoginViewController extends BaseStageController {
         this.stageManager = stageManager;
     }
 
+    @Override
+    public void receiveMessage() {
+    }
+
     @FXML
     private TextField userTextFieldID;
     @FXML
@@ -75,7 +79,7 @@ public class LoginViewController extends BaseStageController {
             stageManager.add(mainSceneManager, Main.mainSceneManagerName);
             mainSceneManager.add(mainScene, "main");
             mainSceneManager.select("main");
-            mainSceneManager.getOwnerStage().setTitle("Weather Report");
+            mainSceneManager.getOwnerStage().setTitle("New Tar");
             stageManager.convertTo(Main.mainSceneManagerName);
         } else messageLabel.setVisible(true);
     }
