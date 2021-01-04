@@ -13,101 +13,74 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.org.y24.ui.controller.TarPageViewController">
-    <Label fx:id="FileNameLabelId" alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="21.0" prefHeight="33.0" prefWidth="324.0" text="NewTar  AutoBackup Setting" AnchorPane.leftAnchor="138.0" AnchorPane.rightAnchor="138.0" AnchorPane.topAnchor="21.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.org.y24.ui.controller.SettingPageViewController">
+    <Label fx:id="FileNameLabelId" alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="138.0" layoutY="21.0"
+           prefHeight="33.0" prefWidth="324.0" text="NewTar  AutoBackup Setting" AnchorPane.leftAnchor="138.0"
+           AnchorPane.rightAnchor="138.0" AnchorPane.topAnchor="21.0">
         <font>
-            <Font size="24.0" />
+            <Font size="24.0"/>
         </font>
         <textFill>
             <LinearGradient>
                 <stops>
                     <Stop>
                         <color>
-                            <Color red="0.08954678475856781" green="0.796326756477356" blue="0.9210526347160339" />
+                            <Color red="0.08954678475856781" green="0.796326756477356" blue="0.9210526347160339"/>
                         </color>
                     </Stop>
                     <Stop offset="1.0">
                         <color>
-                            <Color red="0.022660817950963974" green="0.8157894611358643" blue="0.16806773841381073" />
+                            <Color red="0.022660817950963974" green="0.8157894611358643" blue="0.16806773841381073"/>
                         </color>
                     </Stop>
                 </stops>
             </LinearGradient>
         </textFill>
         <effect>
-            <DropShadow blurType="GAUSSIAN" height="5.0" offsetX="1.0" offsetY="1.0" radius="2.0" width="5.0" />
+            <DropShadow blurType="GAUSSIAN" height="5.0" offsetX="1.0" offsetY="1.0" radius="2.0" width="5.0"/>
         </effect>
     </Label>
-    <Separator layoutX="200.0" layoutY="74.0" prefWidth="200.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="70.0">
+    <Separator layoutX="200.0" layoutY="74.0" prefWidth="200.0" AnchorPane.leftAnchor="100.0"
+               AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="70.0">
         <padding>
-            <Insets top="8.0" />
-        </padding></Separator>
-   <VBox layoutY="88.0" prefHeight="309.0" prefWidth="400.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="88.0">
-      <padding>
-         <Insets top="8.0" />
-      </padding>
-      <children>
-         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="33.0" prefWidth="318.0" text="Enabled">
-            <font>
-               <Font size="24.0" />
-            </font>
-            <textFill>
-               <LinearGradient endX="1.0" endY="1.0">
-                  <stops>
-                     <Stop>
-                        <color>
-                           <Color red="0.2090643346309662" green="0.6842105388641357" blue="0.5337475538253784" />
-                        </color>
-                     </Stop>
-                     <Stop offset="1.0">
-                        <color>
-                           <Color red="0.2223440557718277" green="0.6578947305679321" blue="0.5562662482261658" />
-                        </color>
-                     </Stop>
-                  </stops>
-               </LinearGradient>
-            </textFill>
-            <VBox.margin>
-               <Insets bottom="10.0" left="30.0" right="30.0" />
-            </VBox.margin>
-         </Label>
-         <ListView prefHeight="154.0" prefWidth="400.0" />
-         <HBox prefHeight="44.0" prefWidth="400.0">
-            <children>
-               <DatePicker prefHeight="44.0" prefWidth="182.0">
-                  <HBox.margin>
-                     <Insets left="10.0" />
-                  </HBox.margin>
-               </DatePicker>
-               <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="218.0" text="New">
-                  <HBox.margin>
-                     <Insets bottom="1.0" left="40.0" right="80.0" />
-                  </HBox.margin>
-                  <font>
-                     <Font size="18.0" />
-                  </font>
-                  <textFill>
-                     <LinearGradient endX="1.0" endY="1.0">
-                        <stops>
-                           <Stop>
-                              <color>
-                                 <Color red="0.16374269127845764" green="0.6315789222717285" blue="0.3664717376232147" />
-                              </color>
-                           </Stop>
-                           <Stop offset="1.0">
-                              <color>
-                                 <Color red="0.10818713158369064" green="0.15236355364322662" blue="0.4868420958518982" />
-                              </color>
-                           </Stop>
-                        </stops>
-                     </LinearGradient>
-                  </textFill>
-               </Button>
-            </children>
-            <VBox.margin>
-               <Insets top="10.0" />
-            </VBox.margin>
-         </HBox>
-      </children>
-   </VBox>
+            <Insets top="8.0"/>
+        </padding>
+    </Separator>
+    <VBox layoutY="88.0" prefHeight="309.0" prefWidth="400.0" AnchorPane.leftAnchor="100.0"
+          AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="88.0">
+        <padding>
+            <Insets top="8.0"/>
+        </padding>
+        <children>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+                <children>
+                    <Label prefHeight="25.0" prefWidth="56.0" text="Hour">
+                        <font>
+                            <Font size="18.0"/>
+                        </font>
+                        <HBox.margin>
+                            <Insets left="8.0" right="8.0" top="8.0"/>
+                        </HBox.margin>
+                    </Label>
+                    <TextField>
+                        <font>
+                            <Font size="14.0"/>
+                        </font>
+                        <HBox.margin>
+                            <Insets top="8.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <CheckBox mnemonicParsing="false" prefHeight="25.0" prefWidth="157.0" text="AutoBackup">
+                        <font>
+                            <Font size="18.0"/>
+                        </font>
+                        <HBox.margin>
+                            <Insets left="50.0" top="8.0"/>
+                        </HBox.margin>
+                    </CheckBox>
+                </children>
+            </HBox>
+        </children>
+    </VBox>
 </AnchorPane>

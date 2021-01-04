@@ -6,6 +6,7 @@
 
 package cn.org.y24.ui.controller;
 
+import cn.org.y24.entity.BackupEntity;
 import cn.org.y24.enums.CryptAlgorithm;
 import cn.org.y24.ui.framework.BaseStageController;
 import cn.org.y24.ui.framework.Deliverer;
@@ -29,6 +30,8 @@ import javafx.scene.paint.Paint;
 import java.io.File;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -51,7 +54,7 @@ public class TarPageViewController extends BaseStageController implements Initia
     @FXML
     private StageManager stageManager;
     private String fileName;
-
+    private List<BackupEntity> localSide;
     private StringProperty target;
     private StringProperty name;
     private StringProperty encryption;
@@ -70,8 +73,10 @@ public class TarPageViewController extends BaseStageController implements Initia
     @Override
     public void receiveMessage() {
         if (fileName == null) {
-            fileName = (String) ((Deliverer) stageManager.receiveSingleCastMessage(2).toArray()[0]).getMessage();
+            final Object[] objects = stageManager.receiveSingleCastMessage(2).toArray();
+            fileName = (String) ((Deliverer) objects[0]).getMessage();
             target.setValue(fileName);
+            localSide = (List<BackupEntity>) ((Deliverer) objects[1]).getMessage();
         }
     }
 
@@ -96,6 +101,7 @@ public class TarPageViewController extends BaseStageController implements Initia
                 final String key = encryption.getValue();
                 final String actualKey = String.join("", Collections.nCopies(4, key));
                 if (NewTarUtils.tar(fileName, file.getPath(), encryptionStatusId.isSelected() ? CryptAlgorithm.defaultCrypt : CryptAlgorithm.noCrypt, actualKey)) {
+                    localSide.add(new BackupEntity(fileName, new Date()));
                     stageManager.closeNewest();
                     AlertPageUtil.showSuccessPage("Create NewTar file successfully!");
                 } else {

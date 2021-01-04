@@ -37,6 +37,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class MainViewController extends BaseStageController implements Initializable {
 
     private StageManager stageManager;
@@ -175,9 +177,9 @@ public class MainViewController extends BaseStageController implements Initializ
 
         private void showTarPage(String target) {
             System.out.println(target);
-            localSide.add(new BackupEntity(target, new Date()));
             SceneManager sceneManager = stageManager.get(Main.primarySceneManagerName);
             stageManager.sendSingleCastMessage(sceneManager.getCurrentScene().hashCode(), 2, target);
+            stageManager.sendSingleCastMessage(sceneManager.getCurrentScene().hashCode(), 2, localSide);
             Parent tarPageParent = sceneManager.init("TarPageView.fxml", stageManager);
             if (tarPageParent == null) {
                 System.out.println("TarPageParent null!");
@@ -257,12 +259,24 @@ public class MainViewController extends BaseStageController implements Initializ
         alert.setTitle("结果");
         final var action = new BackupAction(BackupActionType.fetch, account);
         if (backupManager.execute(action)) {
+            cloudSide = action.getEntityList();
+            final FileManager fileManager = new FileManager();
+            final var localDir = "/home/y24/NewTarWorkPath/";
+            final var cloudDir = "ntfp://localhost:2424/" + account.getName() + "/";
+            for (var each : cloudSide) {
+                final String fileName = each.toString();
+                final var paths = fileName.split(File.separator);
+                final String cloud = paths[paths.length - 1];
+                FileAction fileAction = new FileAction(FileActionType.readRemoteTarFile,
+                        new FileEntity(cloudDir + cloud, localDir + each.getTarget()));
+                if (!fileManager.execute(fileAction)) {
+                    alert.setAlertType(Alert.AlertType.ERROR);
+                    alert.setContentText("拉取失败!");
+                    return;
+                }
+            }
             alert.setAlertType(Alert.AlertType.INFORMATION);
             alert.setContentText("成功从云端获取数据!");
-            cloudSide = action.getEntityList();
-            for (var each : cloudSide) {
-
-            }
         } else {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("拉取失败!");
@@ -281,8 +295,23 @@ public class MainViewController extends BaseStageController implements Initializ
             alert.setContentText("无需同步!");
         } else {
             if (backupManager.execute(new BackupAction(BackupActionType.push, localSide, account))) {
+                final FileManager fileManager = new FileManager();
+                final var cloudDir = "ntfp://localhost:2424/" + account.getName() + "/";
+               /* for (var each : localSide) {
+                    final String fileName = each.getTarget();
+                    final var paths = fileName.split(File.separator);
+                    final String cloud = paths[paths.length - 1];
+                    FileAction fileAction = new FileAction(FileActionType.writeRemoteTarFile,
+                            new FileEntity(fileName, cloudDir + cloud));
+                    if (!fileManager.execute(fileAction)) {
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setContentText("上传失败!");
+                        return;
+                    }
+                }*/
                 alert.setAlertType(Alert.AlertType.INFORMATION);
                 alert.setContentText("成功同步数据到云端!");
+
             } else {
                 alert.setAlertType(Alert.AlertType.ERROR);
                 alert.setContentText("同步失败!");
@@ -305,6 +334,18 @@ public class MainViewController extends BaseStageController implements Initializ
 
     @FXML
     private void showAutoBackupConf(ActionEvent actionEvent) {
+        SceneManager sceneManager = stageManager.get(Main.primarySceneManagerName);
+        Parent tarPageParent = sceneManager.init("SettingPageView.fxml", stageManager);
+        if (tarPageParent == null) {
+            System.out.println("SettingPageParent null!");
+            return;
+        }
+        Scene tarPageScene = new Scene(tarPageParent, 1000, 600);
+        sceneManager.delete("setting");
+        sceneManager.add(tarPageScene, "setting");
+        if (sceneManager.select("setting")) {
+            stageManager.showAdditional(Main.primarySceneManagerName);
+        }
     }
 
 /*    @FXML

@@ -67,7 +67,8 @@ public class FileManagerTest {
         final FileManager fileManager = new FileManager();
         final var location = "/home/y24/NewTarWorkPath/a.newtar";
         final var destination = "ntfp://localhost:2424/y24/demo.newtar";
-        FileAction fileAction = new FileAction(FileActionType.writeRemoteTarFile, new FileEntity(location, destination));
+        FileAction fileAction = new FileAction(FileActionType.writeRemoteTarFile,
+                new FileEntity(location, destination));
         assertTrue(fileManager.execute(fileAction));
     }
 
@@ -76,7 +77,8 @@ public class FileManagerTest {
         final FileManager fileManager = new FileManager();
         final var destination = "/home/y24/NewTarWorkPath/";
         final var location = "ntfp://localhost:2424/y24/demo.newtar";
-        FileAction fileAction = new FileAction(FileActionType.readRemoteTarFile, new FileEntity(location, destination));
+        FileAction fileAction = new FileAction(FileActionType.readRemoteTarFile,
+                new FileEntity(location, destination));
         assertTrue(fileManager.execute(fileAction));
     }
 }
