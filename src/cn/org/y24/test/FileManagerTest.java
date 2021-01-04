@@ -25,8 +25,9 @@ public class FileManagerTest {
     @Test
     void testReadUnTarFile() {
         final String dir = "/home/y24/NewTarWorkPath";
-        String destination = dir + "/newTar.ne";
-        String dest = dir + "/newTar";
+        String destination = dir + "/en.newtar";
+        String dest = dir + "/demo";
+        String key = "12345678123456781234567812345678";
         HuffmanManager huffmanManager = new HuffmanManager();
 
         FileManager fileManager = new FileManager();
@@ -39,26 +40,26 @@ public class FileManagerTest {
         HuffmanAction huffmanAction = new HuffmanAction(HuffmanActionType.defaultEncode, huffmanEntity);
         assertTrue(huffmanManager.execute(huffmanAction));
         HuffmanEntity newHuffmanEntity = (HuffmanEntity) huffmanAction.getEntity();
-        final var treeA = newHuffmanEntity.getHuffmanTree();
-        HuffmanManager.preTravelLeaves(treeA);
-        System.out.println("************************");
         newFileEntity.setDestination(destination);
         newFileEntity.setCharCodeTable(newHuffmanEntity.getCodeTable());
-        newFileEntity.setAlgorithm(CryptAlgorithm.noCrypt);
+//        newFileEntity.setAlgorithm(CryptAlgorithm.noCrypt);
+        newFileEntity.setAlgorithm(CryptAlgorithm.defaultCrypt);
+        newFileEntity.setCredential(key);
         assertTrue(fileManager.execute(new FileAction(FileActionType.writeLocalTarFile, newFileEntity)));
         FileEntity entity1 = new FileEntity(destination);
-        entity1.setAlgorithm(CryptAlgorithm.noCrypt);
+        entity1.setAlgorithm(CryptAlgorithm.defaultCrypt);
+        entity1.setCredential(key);
+//        entity1.setAlgorithm(CryptAlgorithm.noCrypt);
         FileAction unTarAction = new FileAction(FileActionType.readLocalTarFile, entity1);
         assertTrue(fileManager.execute(unTarAction));
         FileEntity unTarEntity = (FileEntity) unTarAction.getEntity();
-        FileEntity entity2 = new FileEntity(destination, dest);
+        FileEntity entity2 = new FileEntity(destination, dest + "/a");
         entity2.setFileNameList(unTarEntity.getFileNameList());
         entity2.setCharCodeTable(unTarEntity.getCharCodeTable());
         entity2.setFileBodyBlocks(unTarEntity.getFileBodyBlocks());
         FileAction action = new FileAction(FileActionType.writeLocalUnTarFile, entity2);
         assertTrue(fileManager.execute(action));
         FileEntity entity = (FileEntity) action.getEntity();
-
     }
 
     @Test

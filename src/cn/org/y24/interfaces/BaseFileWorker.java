@@ -34,9 +34,10 @@ public abstract class BaseFileWorker {
         if (cryptAlgorithm == CryptAlgorithm.noCrypt)
             return input;
         final var entity = new CryptEntity(input);
-        if (!cryptManager.execute(new CryptAction(cryptActionType, entity)))
+        final CryptAction cryptAction = new CryptAction(cryptActionType, entity);
+        if (!cryptManager.execute(cryptAction))
             return input;
-        return entity.getOutput();
+        return ((CryptEntity) cryptAction.getEntity()).getOutput();
     }
 
     public byte[] encrypt(byte[] input) {

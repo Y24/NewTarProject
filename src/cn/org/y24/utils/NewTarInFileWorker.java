@@ -45,14 +45,13 @@ public class NewTarInFileWorker extends BaseFileWorker {
             return emptyWorker;
         try {
             final InputStream input = new FileInputStream(file);
-            byte[] magicField = new byte[NewTarFileSpec.magicNumberBytes.length];
-            if (input.read(magicField) < NewTarFileSpec.magicNumberBytes.length
-                    || !NewTarFileSpec.magicNumber.equals(new String(magicField)))
+            byte[] magicField = new byte[input.read()];
+            if (input.read(magicField) < magicField.length)
                 return emptyWorker;
 
             final CryptAlgorithm cryptAlgorithm = CryptAlgorithm.valueOf(input.read());
             input.close();
-            return NewTarFileSpec.isValidCredential(cryptAlgorithm, new String(magicField), credential)
+            return NewTarFileSpec.isValidCredential(cryptAlgorithm, magicField, credential)
                     ? new NewTarInFileWorker(location, cryptAlgorithm, credential) : emptyWorker;
         } catch (IOException | InvalidPasswordException e) {
             return emptyWorker;
@@ -113,25 +112,20 @@ public class NewTarInFileWorker extends BaseFileWorker {
             final byte[] buffer = new byte[count];
             if (input.read(buffer, 0, count) < count)
                 return null;
-            return decrypt(buffer);
+            return buffer;
         } catch (IOException e) {
             return null;
         }
     }
 
     private byte[] getBytes() {
-
-        try {
-            final int count = getIntDirectly();
-            if (count < 1)
-                return null;
-            final byte[] buffer = new byte[count];
-            if (input.read(buffer, 0, count) < count)
-                return null;
-            return decrypt(buffer);
-        } catch (IOException e) {
+        final int count = getIntDirectly();
+        if (count < 1)
             return null;
-        }
+        final byte[] buffer = getBytesDirectly(count);
+        if (buffer == null)
+            return null;
+        return decrypt(buffer);
     }
 
     private int getIntDirectly() {
@@ -229,7 +223,7 @@ public class NewTarInFileWorker extends BaseFileWorker {
         try {
             input = new FileInputStream(file);
             // with an additional cryptAlgorithm byte.
-            input.skipNBytes(NewTarFileSpec.magicNumberBytes.length + 1);
+            input.skipNBytes(input.read() + 1);
             return true;
         } catch (IOException e) {
             System.err.println("Cannot happen in openTargetFile of inWorker!");

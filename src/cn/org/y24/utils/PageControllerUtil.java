@@ -30,12 +30,14 @@ public class PageControllerUtil {
     public static boolean checkEncryption(CheckBox encryptionStatusId, StringProperty encryption, StringProperty keyPrompt, Label keyPromptId, BooleanProperty isKeyPromptShowing) {
         if (encryptionStatusId.isSelected()) {
             final var value = encryption.getValue();
-            if (value == null || value.length() != 32) {
-                keyPrompt.setValue("Key must be 32 long!");
+            if (value == null || value.length() != 8) {
+                System.out.println("Fail Test key: " + value);
+                keyPrompt.setValue("Key must be 8 long!");
                 keyPromptId.textFillProperty().setValue(Paint.valueOf("red"));
                 isKeyPromptShowing.setValue(true);
                 return false;
             } else {
+                System.out.println("Good Test key: " + value);
                 keyPrompt.setValue("Good Choose!");
                 keyPromptId.textFillProperty().setValue(Paint.valueOf("green"));
                 isKeyPromptShowing.setValue(true);

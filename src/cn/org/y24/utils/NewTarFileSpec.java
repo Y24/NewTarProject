@@ -16,27 +16,31 @@ import cn.org.y24.manager.CryptManager;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.SimpleFormatter;
 
 public class NewTarFileSpec {
-    public static final String magicNumber = ">_<$_$^_^?_>";
+    public static final String magicNumber = ">_<$_$^_^?_>)_(.";
     public static final byte[] magicNumberBytes = magicNumber.getBytes(StandardCharsets.UTF_8);
     public static final NewTarHeader defaultHeader = NewTarHeader.defaultHeader("~_~");
     public static final int headItemsCount = 6;
     public static final int maxBlockLength = 1024;
     public static final int maxReadCount = 1024;
     public static final int defVersion = 0;
-    public static final DateFormat defaultDateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.CHINA);
+    public static final DateFormat defaultDateFormat = new SimpleDateFormat("yyyy.MM.dd (E)'at' hh:mm:ss a zzz");
     public static String suffix = ".newtar";
 
-    public static boolean isValidCredential(CryptAlgorithm cryptAlgorithm, String magicField, String testKey) {
+    public static boolean isValidCredential(CryptAlgorithm cryptAlgorithm, byte[] data, String testKey) {
         if (cryptAlgorithm == CryptAlgorithm.noCrypt)
             return true;
         try {
+            if (testKey == null || testKey.length() != 32)
+                return false;
             final CryptManager manager = new CryptManager(CipherAESCryptProcessor.getInstance(cryptAlgorithm, testKey));
-            final CryptEntity entity = new CryptEntity(magicField.getBytes(StandardCharsets.UTF_8));
+            final CryptEntity entity = new CryptEntity(data);
             if (!manager.execute(new CryptAction(CryptActionType.defaultDecrypt, entity)))
                 return false;
             return new String(entity.getOutput()).equals(magicNumber);

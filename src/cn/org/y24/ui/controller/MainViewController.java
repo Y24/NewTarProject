@@ -220,13 +220,15 @@ public class MainViewController extends BaseStageController implements Initializ
     @FXML
     private void doLogout() {
         accountManager.execute(new AccountAction(AccountActionType.logout, account));
-        stageManager.convertTo(Main.primarySceneManagerName);
+        if (stageManager.get(Main.primarySceneManagerName).select(Main.primarySceneName))
+            stageManager.showOnly(Main.primarySceneManagerName);
     }
 
     @FXML
     private void doDispose() {
         accountManager.execute(new AccountAction(AccountActionType.dispose, account));
-        stageManager.convertTo(Main.primarySceneManagerName);
+        if (stageManager.get(Main.primarySceneManagerName).select(Main.primarySceneName))
+            stageManager.showOnly(Main.primarySceneManagerName);
     }
 
     @FXML
@@ -258,6 +260,9 @@ public class MainViewController extends BaseStageController implements Initializ
             alert.setAlertType(Alert.AlertType.INFORMATION);
             alert.setContentText("成功从云端获取数据!");
             cloudSide = action.getEntityList();
+            for (var each : cloudSide) {
+
+            }
         } else {
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setContentText("拉取失败!");

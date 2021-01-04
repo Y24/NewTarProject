@@ -66,8 +66,11 @@ public class NewTarOutFileWorker extends BaseFileWorker {
             return false;
         try {
             output = new FileOutputStream(file);
-            writeBytesDirectly(encrypt(NewTarFileSpec.magicNumberBytes));
-            writeBytesDirectly(new byte[]{(byte) getCryptAlgorithm().getValue()});
+            final byte[] encrypt = encrypt(NewTarFileSpec.magicNumberBytes);
+            output.write(encrypt.length);
+            writeBytesDirectly(encrypt);
+            output.write(getCryptAlgorithm().getValue());
+//            writeBytesDirectly(new byte[]{(byte) getCryptAlgorithm().getValue()});
             return true;
         } catch (IOException e) {
             return false;
@@ -91,17 +94,24 @@ public class NewTarOutFileWorker extends BaseFileWorker {
     }
 
     private boolean writeIntDirectly(int target) {
-        return writeBytesDirectly(encrypt(DataConverter.intToBytes(target)));
+        try {
+            output.write(DataConverter.intToBytes(target));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private boolean writeBytes(byte[] bytes) {
-        return writeIntDirectly(bytes.length)
-                && writeBytesDirectly(bytes);
+        final var encrypt = encrypt(bytes);
+        return writeIntDirectly(encrypt.length)
+                && writeBytesDirectly(encrypt);
     }
 
     private boolean writeBytesDirectly(byte[] bytes) {
         try {
-            output.write(encrypt(bytes));
+            output.write(bytes);
             return true;
         } catch (IOException e) {
             return false;

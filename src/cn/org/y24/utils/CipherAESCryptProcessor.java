@@ -43,7 +43,7 @@ public class CipherAESCryptProcessor implements ICryptProcess {
      * @throws InvalidPasswordException
      */
     static public CipherAESCryptProcessor getInstance(CryptAlgorithm cryptAlgorithm, String key) throws InvalidPasswordException {
-        if (key.length() != 32) {
+        if (cryptAlgorithm != CryptAlgorithm.noCrypt && key.length() != 32) {
             throw new InvalidPasswordException(key);
         }
         return new CipherAESCryptProcessor(cryptAlgorithm, key.substring(0, 16).getBytes(StandardCharsets.UTF_8), key.substring(16).getBytes(StandardCharsets.UTF_8));

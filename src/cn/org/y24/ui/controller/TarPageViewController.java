@@ -28,7 +28,9 @@ import javafx.scene.paint.Paint;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class TarPageViewController extends BaseStageController implements Initializable {
 
@@ -91,7 +93,9 @@ public class TarPageViewController extends BaseStageController implements Initia
                 namePromptId.textFillProperty().setValue(Paint.valueOf("green"));
                 if (!checkEncryption())
                     return;
-                if (NewTarUtils.tar(fileName, file.getPath(), encryptionStatusId.isSelected() ? CryptAlgorithm.defaultCrypt : CryptAlgorithm.noCrypt, encryption.getValue())) {
+                final String key = encryption.getValue();
+                final String actualKey = String.join("", Collections.nCopies(4, key));
+                if (NewTarUtils.tar(fileName, file.getPath(), encryptionStatusId.isSelected() ? CryptAlgorithm.defaultCrypt : CryptAlgorithm.noCrypt, actualKey)) {
                     stageManager.closeNewest();
                     AlertPageUtil.showSuccessPage("Create NewTar file successfully!");
                 } else {

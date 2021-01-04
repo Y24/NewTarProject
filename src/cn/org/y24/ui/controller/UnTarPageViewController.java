@@ -26,6 +26,7 @@ import javafx.scene.paint.Paint;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class UnTarPageViewController extends BaseStageController implements Initializable {
@@ -93,7 +94,9 @@ public class UnTarPageViewController extends BaseStageController implements Init
                     return;
                 namePrompt.setValue("Good Choose!");
                 namePromptId.textFillProperty().setValue(Paint.valueOf("green"));
-                if (NewTarUtils.unTar(target.getValue(), file.getPath(), encryption.getValue())) {
+                final String key = encryption.getValue();
+                final String actualKey = String.join("", Collections.nCopies(4, key));
+                if (NewTarUtils.unTar(target.getValue(), file.getPath(), actualKey)) {
                     stageManager.closeNewest();
                     AlertPageUtil.showSuccessPage("Untar NewTar file successfully!");
                 } else {
